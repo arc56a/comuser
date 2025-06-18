@@ -64,7 +64,9 @@
         .profile-container {
             width: 100%;
             max-width: 450px;
+            position: relative; /* مهم للوضع المطلق للعلامة المائية */
             transition: all var(--transition-speed);
+            padding-top: 30px; /* لإفساح المجال للعلامة المائية */
         }
         
         .user-card {
@@ -123,6 +125,25 @@
             transition: color var(--transition-speed);
         }
         
+        /* العلامة المائية */
+        .watermark-text {
+            position: absolute;
+            top: 0; /* ضعها فوق الكارد مباشرة */
+            left: 50%; /* توسيط أفقي */
+            transform: translateX(-50%); /* توسيط حقيقي */
+            font-size: 0.8rem; /* حجم صغير */
+            color: rgba(255, 255, 255, 0.4); /* شفافية خافتة */
+            z-index: 5; /* تأكد من أنها تظهر فوق عناصر أخرى إذا تداخلت */
+            white-space: nowrap; /* منع النص من الالتفاف */
+            user-select: none; /* منع تحديد النص */
+            pointer-events: none; /* منع تفاعلات الماوس */
+            transition: opacity var(--transition-speed);
+        }
+        
+        .watermark-text.hidden {
+            opacity: 0 !important; /* إخفاء تام عند التفعيل */
+        }
+
         /* نموذج التعديل */
         .edit-form {
             display: none;
@@ -394,6 +415,17 @@
             transform: translateX(26px);
         }
         
+        .purchase-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .purchase-info input {
+            margin-bottom: 10px;
+        }
+
         /* البرنامج التعليمي */
         .tutorial-overlay {
             position: fixed;
@@ -498,6 +530,7 @@
             .profile-container {
                 max-width: 100%;
                 padding: 15px;
+                padding-top: 30px; /* لإفساح المجال للعلامة المائية */
             }
             
             .user-card, .edit-form {
@@ -589,6 +622,19 @@
                     </label>
                     <span id="card-status">مفعّلة</span>
                 </div>
+            </div>
+
+            <!-- خيار إزالة الحقوق الجديد -->
+            <div class="setting-item" id="remove-rights-section">
+                <label>إزالة الحقوق (5$)</label>
+                <input type="password" id="secret-code-input" placeholder="أدخل الكود السري">
+                <button class="btn hidden" id="submit-code-btn" style="margin-top: 10px;">
+                    <i class="fas fa-key"></i> إدخال الكود
+                </button>
+                <button class="btn" id="purchase-link-btn" style="margin-top: 10px;">
+                    <i class="fas fa-money-bill"></i> شراء الكود
+                </button>
+                <p id="remove-rights-message" class="purchase-info"></p>
             </div>
         </div>
         
@@ -741,6 +787,9 @@
     
     <!-- المحتوى الرئيسي -->
     <div class="profile-container">
+        <!-- العلامة المائية الجديدة -->
+        <div class="watermark-text" id="watermark-text">By : ar_c56</div>
+
         <!-- بطاقة الملف الشخصي -->
         <div class="user-card" id="profile-card">
             <img id="profile-display" src="https://l.top4top.io/p_345086ryb0.jpg" class="profile-pic" alt="صورة البروفايل">
@@ -821,6 +870,15 @@
         const nameDisplay = document.getElementById('name-display');
         const usernameDisplay = document.getElementById('username-display');
         const bioDisplay = document.getElementById('bio-display');
+
+        // عناصر إزالة الحقوق الجديدة
+        const removeRightsSection = document.getElementById('remove-rights-section');
+        const secretCodeInput = document.getElementById('secret-code-input');
+        const submitCodeBtn = document.getElementById('submit-code-btn'); // تم تغيير الاسم
+        const purchaseLinkBtn = document.getElementById('purchase-link-btn'); // زر شراء الكود
+        const removeRightsMessage = document.getElementById('remove-rights-message');
+        const watermarkText = document.getElementById('watermark-text');
+
 
         // البرنامج التعليمي
         const tutorialOverlay = document.getElementById('tutorial-overlay');
@@ -994,13 +1052,59 @@
                 el.style.webkitBackdropFilter = `blur(${value}px)`;
             });
         });
-        
-        // تهيئة القيم الأولية
+
+        // إظهار/إخفاء زر "إدخال الكود" بناءً على إدخال الكود السري
+        secretCodeInput.addEventListener('input', () => {
+            if (secretCodeInput.value.trim().length > 0) {
+                submitCodeBtn.classList.remove('hidden');
+            } else {
+                submitCodeBtn.classList.add('hidden');
+            }
+        });
+
+        // وظيفة إدخال الكود السري
+        submitCodeBtn.addEventListener('click', () => {
+            const secretCode = secretCodeInput.value.trim();
+            const correctCode = 'comuser2025'; // الكود السري الصحيح
+
+            if (secretCode === correctCode) {
+                watermarkText.classList.add('hidden'); // إخفاء العلامة المائية
+                localStorage.setItem('rightsRemoved', 'true'); // حفظ الحالة
+                removeRightsMessage.textContent = 'تمت إزالة الحقوق بنجاح!';
+                removeRightsMessage.style.color = '#4CAF50'; // لون أخضر للنجاح
+                secretCodeInput.disabled = true; // تعطيل الحقل
+                submitCodeBtn.disabled = true; // تعطيل الزر
+                purchaseLinkBtn.disabled = true; // تعطيل زر شراء الكود أيضاً
+            } else {
+                removeRightsMessage.textContent = 'الكود السري غير صحيح. حاول مرة أخرى.';
+                removeRightsMessage.style.color = '#f44336'; // لون أحمر للخطأ
+            }
+        });
+
+        // وظيفة شراء الكود (التحويل إلى الانستغرام)
+        purchaseLinkBtn.addEventListener('click', () => {
+            window.open('https://www.instagram.com/ar_c56?igsh=cWpudDJueTNqNjRj', '_blank');
+        });
+
+        // تهيئة القيم الأولية عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             // تعبئة ألوان المدخلات من CSS المتغيرات
             frameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--frame-color').trim();
             nameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--name-color').trim();
             bioColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--bio-color').trim();
+
+            // التحقق مما إذا كانت الحقوق قد تمت إزالتها مسبقاً
+            if (localStorage.getItem('rightsRemoved') === 'true') {
+                watermarkText.classList.add('hidden'); // إخفاء العلامة المائية عند التحميل
+                removeRightsMessage.textContent = 'تمت إزالة الحقوق مسبقاً.';
+                removeRightsMessage.style.color = '#4CAF50';
+                secretCodeInput.disabled = true;
+                submitCodeBtn.disabled = true;
+                purchaseLinkBtn.disabled = true;
+            } else {
+                // تأكد من إخفاء زر إدخال الكود في البداية إذا لم يكن الكود قد تم إزالته
+                submitCodeBtn.classList.add('hidden');
+            }
         });
     </script>
 </body>
