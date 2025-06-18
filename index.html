@@ -847,7 +847,7 @@
         
         // عناصر المظهر
         const bgUrlInput = document.getElementById('bg-url');
-        const applyBgBtn = document.getElementById('apply-bg');
+        const applyBgBtn = document = document.getElementById('apply-bg');
         const frameColorInput = document.getElementById('frame-color');
         const applyFrameBtn = document.getElementById('apply-frame');
         const nameColorInput = document.getElementById('name-color');
@@ -874,8 +874,8 @@
         // عناصر إزالة الحقوق الجديدة
         const removeRightsSection = document.getElementById('remove-rights-section');
         const secretCodeInput = document.getElementById('secret-code-input');
-        const submitCodeBtn = document.getElementById('submit-code-btn'); // تم تغيير الاسم
-        const purchaseLinkBtn = document.getElementById('purchase-link-btn'); // زر شراء الكود
+        const submitCodeBtn = document.getElementById('submit-code-btn'); 
+        const purchaseLinkBtn = document.getElementById('purchase-link-btn'); 
         const removeRightsMessage = document.getElementById('remove-rights-message');
         const watermarkText = document.getElementById('watermark-text');
 
@@ -943,10 +943,11 @@
             profileCard.classList.add('hidden');
             editForm.classList.add('active');
             
-            // تعبئة الحقول بالقيم الحالية
-            nameInput.value = nameDisplay.textContent;
-            usernameInput.value = usernameDisplay.textContent.replace('@', '');
-            bioInput.value = bioDisplay.textContent;
+            // تعبئة الحقول بالقيم الحالية المحفوظة في localStorage
+            nameInput.value = localStorage.getItem('profileName') || nameDisplay.textContent;
+            usernameInput.value = (localStorage.getItem('profileUsername') || usernameDisplay.textContent).replace('@', '');
+            bioInput.value = localStorage.getItem('profileBio') || bioDisplay.textContent;
+            profilePreview.src = localStorage.getItem('profilePicUrl') || profilePreview.src;
         });
         
         // إلغاء التعديل
@@ -967,7 +968,7 @@
             }
         });
         
-        // معالجة إرسال النموذج
+        // معالجة إرسال النموذج وحفظ البيانات في localStorage
         profileForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
@@ -976,12 +977,22 @@
             usernameDisplay.textContent = '@' + usernameInput.value;
             bioDisplay.textContent = bioInput.value;
             
+            // حفظ البيانات في localStorage
+            localStorage.setItem('profileName', nameInput.value);
+            localStorage.setItem('profileUsername', '@' + usernameInput.value);
+            localStorage.setItem('profileBio', bioInput.value);
+
+            // معالجة وحفظ صورة البروفايل
             if (profilePicInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     profileDisplay.src = event.target.result;
+                    localStorage.setItem('profilePicUrl', event.target.result); // حفظ Data URL للصورة
                 };
                 reader.readAsDataURL(profilePicInput.files[0]);
+            } else {
+                // إذا لم يتم اختيار صورة جديدة، حفظ الصورة الحالية في حال كانت موجودة
+                localStorage.setItem('profilePicUrl', profileDisplay.src);
             }
             
             // العودة إلى عرض الملف الشخصي
@@ -1010,12 +1021,21 @@
                     setTimeout(() => {
                         videoBg.style.opacity = '1';
                     }, 500);
+                    localStorage.setItem('backgroundUrl', url); // حفظ الخلفية
+                    localStorage.setItem('backgroundType', 'video'); // حفظ نوع الخلفية
                 } else {
                     document.body.style.backgroundImage = `url('${url}')`;
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
                     videoBg.style.opacity = '0';
+                    localStorage.setItem('backgroundUrl', url); // حفظ الخلفية
+                    localStorage.setItem('backgroundType', 'image'); // حفظ نوع الخلفية
                 }
+            } else {
+                document.body.style.backgroundImage = 'none'; // إزالة الخلفية إذا كان الرابط فارغًا
+                videoBg.src = ''; // إزالة مصدر الفيديو
+                localStorage.removeItem('backgroundUrl');
+                localStorage.removeItem('backgroundType');
             }
         });
         
@@ -1023,16 +1043,19 @@
         applyFrameBtn.addEventListener('click', () => {
             document.documentElement.style.setProperty('--frame-color', frameColorInput.value);
             profilePreview.style.borderColor = frameColorInput.value;
+            localStorage.setItem('frameColor', frameColorInput.value);
         });
         
         // تغيير لون الاسم
         applyNameBtn.addEventListener('click', () => {
             document.documentElement.style.setProperty('--name-color', nameColorInput.value);
+            localStorage.setItem('nameColor', nameColorInput.value);
         });
         
         // تغيير لون العبارة
         applyBioBtn.addEventListener('click', () => {
             document.documentElement.style.setProperty('--bio-color', bioColorInput.value);
+            localStorage.setItem('bioColor', bioColorInput.value);
         });
         
         // تغيير شفافية البطاقة
@@ -1040,6 +1063,7 @@
             const value = opacityRange.value;
             opacityValue.textContent = `${value}%`;
             document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${value/100 * 0.1})`);
+            localStorage.setItem('cardOpacity', value);
         });
         
         // تغيير ضبابية الخلفية
@@ -1051,6 +1075,7 @@
                 el.style.backdropFilter = `blur(${value}px)`;
                 el.style.webkitBackdropFilter = `blur(${value}px)`;
             });
+            localStorage.setItem('cardBlur', value);
         });
 
         // إظهار/إخفاء زر "إدخال الكود" بناءً على إدخال الكود السري
@@ -1088,10 +1113,88 @@
 
         // تهيئة القيم الأولية عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', () => {
-            // تعبئة ألوان المدخلات من CSS المتغيرات
-            frameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--frame-color').trim();
-            nameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--name-color').trim();
-            bioColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--bio-color').trim();
+            // تحميل معلومات الملف الشخصي
+            const savedName = localStorage.getItem('profileName');
+            const savedUsername = localStorage.getItem('profileUsername');
+            const savedBio = localStorage.getItem('profileBio');
+            const savedPicUrl = localStorage.getItem('profilePicUrl');
+
+            if (savedName) {
+                nameDisplay.textContent = savedName;
+            }
+            if (savedUsername) {
+                usernameDisplay.textContent = savedUsername;
+            }
+            if (savedBio) {
+                bioDisplay.textContent = savedBio;
+            }
+            if (savedPicUrl) {
+                profileDisplay.src = savedPicUrl;
+                profilePreview.src = savedPicUrl; // تحديث صورة المعاينة أيضاً
+            }
+
+            // تحميل إعدادات المظهر
+            const savedFrameColor = localStorage.getItem('frameColor');
+            const savedNameColor = localStorage.getItem('nameColor');
+            const savedBioColor = localStorage.getItem('bioColor');
+            const savedCardOpacity = localStorage.getItem('cardOpacity');
+            const savedCardBlur = localStorage.getItem('cardBlur');
+            const savedBackgroundUrl = localStorage.getItem('backgroundUrl');
+            const savedBackgroundType = localStorage.getItem('backgroundType');
+
+            if (savedFrameColor) {
+                document.documentElement.style.setProperty('--frame-color', savedFrameColor);
+                frameColorInput.value = savedFrameColor;
+                profilePreview.style.borderColor = savedFrameColor;
+            } else {
+                frameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--frame-color').trim();
+            }
+
+            if (savedNameColor) {
+                document.documentElement.style.setProperty('--name-color', savedNameColor);
+                nameColorInput.value = savedNameColor;
+            } else {
+                nameColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--name-color').trim();
+            }
+
+            if (savedBioColor) {
+                document.documentElement.style.setProperty('--bio-color', savedBioColor);
+                bioColorInput.value = savedBioColor;
+            } else {
+                bioColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--bio-color').trim();
+            }
+
+            if (savedCardOpacity) {
+                document.documentElement.style.setProperty('--card-bg', `rgba(255, 255, 255, ${savedCardOpacity/100 * 0.1})`);
+                opacityRange.value = savedCardOpacity;
+                opacityValue.textContent = `${savedCardOpacity}%`;
+            }
+
+            if (savedCardBlur) {
+                document.documentElement.style.setProperty('--card-bg-blur', `${savedCardBlur}px`);
+                document.querySelectorAll('.user-card, .edit-form').forEach(el => {
+                    el.style.backdropFilter = `blur(${savedCardBlur}px)`;
+                    el.style.webkitBackdropFilter = `blur(${savedCardBlur}px)`;
+                });
+                blurRange.value = savedCardBlur;
+                blurValue.textContent = `${savedCardBlur}px`;
+            }
+
+            if (savedBackgroundUrl) {
+                if (savedBackgroundType === 'video') {
+                    videoBg.src = savedBackgroundUrl;
+                    videoBg.style.opacity = '1';
+                    document.body.style.backgroundImage = 'none'; // إزالة خلفية الصورة إذا كان هناك فيديو
+                } else if (savedBackgroundType === 'image') {
+                    document.body.style.backgroundImage = `url('${savedBackgroundUrl}')`;
+                    document.body.style.backgroundSize = 'cover';
+                    document.body.style.backgroundPosition = 'center';
+                    videoBg.src = ''; // إزالة مصدر الفيديو إذا كان هناك صورة
+                    videoBg.style.opacity = '0';
+                }
+                bgUrlInput.value = savedBackgroundUrl;
+            }
+
 
             // التحقق مما إذا كانت الحقوق قد تمت إزالتها مسبقاً
             if (localStorage.getItem('rightsRemoved') === 'true') {
