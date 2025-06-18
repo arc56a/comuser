@@ -145,22 +145,46 @@
         }
 
         /* نموذج التعديل */
+        .edit-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .edit-form-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         .edit-form {
-            display: none;
             background: var(--card-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 20px;
             padding: 30px;
-            width: 100%;
+            width: 90%; /* تجاوبي مع الهاتف */
+            max-width: 500px; /* الحد الأقصى للعرض */
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             border: 1px solid var(--card-border);
-            margin-bottom: 20px;
+            transform: scale(0.9); /* تأثير بداية لطيف */
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
         }
         
-        .edit-form.active {
-            display: block;
+        .edit-form-overlay.active .edit-form {
+            transform: scale(1);
+            opacity: 1;
         }
         
         .form-group {
@@ -797,8 +821,10 @@
             <p id="username-display" class="user-username">@username</p>
             <p id="bio-display" class="user-bio">هذه عبارة تجريبية يمكنك تغييرها لاحقاً</p>
         </div>
-        
-        <!-- نموذج التعديل -->
+    </div>
+
+    <!-- هذا هو الغطاء ونافذة التعديل الجديدة -->
+    <div class="edit-form-overlay" id="edit-form-overlay">
         <div class="edit-form" id="edit-form">
             <form id="profile-form">
                 <div class="form-group">
@@ -839,6 +865,7 @@
         const closeSettings = document.getElementById('close-settings');
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const profileCard = document.getElementById('profile-card');
+        const editFormOverlay = document.getElementById('edit-form-overlay'); // العنصر الجديد
         const editForm = document.getElementById('edit-form');
         const profileForm = document.getElementById('profile-form');
         const cancelEdit = document.getElementById('cancel-edit');
@@ -940,8 +967,8 @@
         // تعديل الملف الشخصي
         editProfileBtn.addEventListener('click', () => {
             settingsPanel.classList.remove('active');
-            profileCard.classList.add('hidden');
-            editForm.classList.add('active');
+            profileCard.classList.add('hidden'); // يمكنك إخفاء البطاقة الرئيسية إذا أردت
+            editFormOverlay.classList.add('active'); // عرض الغطاء ونافذة التعديل
             
             // تعبئة الحقول بالقيم الحالية المحفوظة في localStorage
             nameInput.value = localStorage.getItem('profileName') || nameDisplay.textContent;
@@ -952,8 +979,8 @@
         
         // إلغاء التعديل
         cancelEdit.addEventListener('click', () => {
-            editForm.classList.remove('active');
-            profileCard.classList.remove('hidden');
+            editFormOverlay.classList.remove('active'); // إخفاء الغطاء ونافذة التعديل
+            profileCard.classList.remove('hidden'); // إعادة إظهار البطاقة الرئيسية
         });
         
         // معالجة اختيار صورة جديدة
@@ -996,8 +1023,8 @@
             }
             
             // العودة إلى عرض الملف الشخصي
-            editForm.classList.remove('active');
-            profileCard.classList.remove('hidden');
+            editFormOverlay.classList.remove('active'); // إخفاء الغطاء ونافذة التعديل
+            profileCard.classList.remove('hidden'); // إعادة إظهار البطاقة الرئيسية
         });
         
         // تبديل إظهار/إخفاء البطاقة
