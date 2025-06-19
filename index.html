@@ -721,6 +721,21 @@
                 <span id="blur-value" style="display: block; text-align: center; margin-top: 5px;">5px</span>
             </div>
         </div>
+
+        <!-- قسم البرنامج التعليمي الجديد -->
+        <div class="settings-section">
+            <h3><i class="fas fa-book"></i> البرنامج التعليمي</h3>
+            <div class="setting-item">
+                <label>إظهار/إخفاء البرنامج التعليمي</label>
+                <div style="display: flex; align-items: center;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-tutorial">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="tutorial-status">مفعّلة</span>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- البرنامج التعليمي -->
@@ -747,7 +762,7 @@
                 <h3>تعديل الملف الشخصي</h3>
                 <p>يمكنك تعديل معلوماتك الشخصية بالضغط على زر الإعدادات <i class="fas fa-cog"></i> ثم اختيار "تعديل الملف الشخصي".</p>
                 <p>ستتمكن من تغيير صورتك، اسمك، اسم المستخدم والعبارة الشخصية.</p>
-                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="تعديل الملف الشخصي" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
+                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="[Image of تعديل الملف الشخصي]" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
                 <div class="tutorial-progress">2/5</div>
                 <div class="tutorial-nav">
                     <button class="btn btn-outline" onclick="prevStep()">
@@ -763,7 +778,7 @@
                 <h3>تخصيص المظهر</h3>
                 <p>يمكنك تغيير خلفية الموقع من خلال إضافة رابط فيديو أو صورة.</p>
                 <p>كما يمكنك تغيير ألوان إطار الصورة، الاسم والعبارة الشخصية.</p>
-                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="تخصيص المظهر" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
+                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="[Image of تخصيص المظهر]" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
                 <div class="tutorial-progress">3/5</div>
                 <div class="tutorial-nav">
                     <button class="btn btn-outline" onclick="prevStep()">
@@ -779,7 +794,7 @@
                 <h3>خيارات متقدمة</h3>
                 <p>يمكنك ضبط شفافية البطاقة ودرجة ضبابية الخلفية حسب رغبتك.</p>
                 <p>هذه الخيارات تتيح لك التحكم الكامل في مظهر موقعك الشخصي.</p>
-                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="خيارات متقدمة" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
+                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="[Image of خيارات متقدمة]" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
                 <div class="tutorial-progress">4/5</div>
                 <div class="tutorial-nav">
                     <button class="btn btn-outline" onclick="prevStep()">
@@ -795,7 +810,7 @@
                 <h3>جاهز للبدء!</h3>
                 <p>الآن أنت تعرف كيفية استخدام جميع ميزات الموقع.</p>
                 <p>يمكنك دائماً الرجوع إلى الإعدادات لتعديل أي شيء لاحقاً.</p>
-                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="جاهز للبدء" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
+                <img src="https://l.top4top.io/p_345086ryb0.jpg" alt="[Image of جاهز للبدء]" style="max-height: 150px; border-radius: 50%; border: 3px solid var(--accent-color);">
                 <div class="tutorial-progress">5/5</div>
                 <div class="tutorial-nav">
                     <button class="btn btn-outline" onclick="prevStep()">
@@ -865,7 +880,7 @@
         const closeSettings = document.getElementById('close-settings');
         const editProfileBtn = document.getElementById('edit-profile-btn');
         const profileCard = document.getElementById('profile-card');
-        const editFormOverlay = document.getElementById('edit-form-overlay'); // العنصر الجديد
+        const editFormOverlay = document.getElementById('edit-form-overlay');
         const editForm = document.getElementById('edit-form');
         const profileForm = document.getElementById('profile-form');
         const cancelEdit = document.getElementById('cancel-edit');
@@ -874,7 +889,7 @@
         
         // عناصر المظهر
         const bgUrlInput = document.getElementById('bg-url');
-        const applyBgBtn = document = document.getElementById('apply-bg');
+        const applyBgBtn = document.getElementById('apply-bg');
         const frameColorInput = document.getElementById('frame-color');
         const applyFrameBtn = document.getElementById('apply-frame');
         const nameColorInput = document.getElementById('name-color');
@@ -906,20 +921,14 @@
         const removeRightsMessage = document.getElementById('remove-rights-message');
         const watermarkText = document.getElementById('watermark-text');
 
-
-        // البرنامج التعليمي
+        // عناصر البرنامج التعليمي
         const tutorialOverlay = document.getElementById('tutorial-overlay');
         const skipTutorial = document.getElementById('skip-tutorial');
         const finishTutorial = document.getElementById('finish-tutorial');
+        const toggleTutorial = document.getElementById('toggle-tutorial'); // جديد
+        const tutorialStatus = document.getElementById('tutorial-status'); // جديد
         let currentStep = 1;
         const totalSteps = 5;
-
-        // عرض البرنامج التعليمي عند أول زيارة
-        if (!localStorage.getItem('tutorialCompleted')) {
-            setTimeout(() => {
-                tutorialOverlay.classList.add('active');
-            }, 1000);
-        }
 
         // وظائف البرنامج التعليمي
         function showStep(step) {
@@ -942,6 +951,12 @@
             }
         }
 
+        // وظيفة إكمال/تخطي البرنامج التعليمي
+        function completeTutorial() {
+            tutorialOverlay.classList.remove('active');
+            localStorage.setItem('tutorialCompleted', 'true');
+        }
+
         skipTutorial.addEventListener('click', () => {
             completeTutorial();
         });
@@ -949,11 +964,6 @@
         finishTutorial.addEventListener('click', () => {
             completeTutorial();
         });
-
-        function completeTutorial() {
-            tutorialOverlay.classList.remove('active');
-            localStorage.setItem('tutorialCompleted', 'true');
-        }
 
         // فتح/إغلاق لوحة الإعدادات
         settingsBtn.addEventListener('click', () => {
@@ -1138,6 +1148,27 @@
             window.open('https://www.instagram.com/ar_c56?igsh=cWpudDJueTNqNjRj', '_blank');
         });
 
+        // Event listener for the new tutorial toggle switch
+        toggleTutorial.addEventListener('change', () => {
+            if (toggleTutorial.checked) {
+                // User wants to disable tutorial
+                localStorage.setItem('disableTutorial', 'true');
+                tutorialStatus.textContent = 'معطّلة';
+                tutorialOverlay.classList.remove('active'); // Hide it immediately if active
+            } else {
+                // User wants to enable tutorial
+                localStorage.setItem('disableTutorial', 'false');
+                tutorialStatus.textContent = 'مفعّلة';
+                // If it was completed before, and now re-enabled, show it again
+                // Optionally reset tutorialCompleted so it shows from start
+                localStorage.removeItem('tutorialCompleted'); // Reset completion status
+                setTimeout(() => {
+                    tutorialOverlay.classList.add('active');
+                    showStep(1); // Ensure it starts from step 1
+                }, 100); 
+            }
+        });
+
         // تهيئة القيم الأولية عند تحميل الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             // تحميل معلومات الملف الشخصي
@@ -1234,6 +1265,24 @@
             } else {
                 // تأكد من إخفاء زر إدخال الكود في البداية إذا لم يكن الكود قد تم إزالته
                 submitCodeBtn.classList.add('hidden');
+            }
+
+            // منطق عرض البرنامج التعليمي الجديد
+            const isTutorialDisabled = localStorage.getItem('disableTutorial') === 'true';
+
+            if (isTutorialDisabled) {
+                toggleTutorial.checked = true;
+                tutorialStatus.textContent = 'معطّلة';
+            } else {
+                const tutorialCompletedBefore = localStorage.getItem('tutorialCompleted') === 'true';
+                if (!tutorialCompletedBefore) {
+                    setTimeout(() => {
+                        tutorialOverlay.classList.add('active');
+                        showStep(1); // Ensure it starts from step 1
+                    }, 1000);
+                }
+                toggleTutorial.checked = false;
+                tutorialStatus.textContent = 'مفعّلة';
             }
         });
     </script>
