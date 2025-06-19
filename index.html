@@ -925,8 +925,8 @@
         const tutorialOverlay = document.getElementById('tutorial-overlay');
         const skipTutorial = document.getElementById('skip-tutorial');
         const finishTutorial = document.getElementById('finish-tutorial');
-        const toggleTutorial = document.getElementById('toggle-tutorial'); // جديد
-        const tutorialStatus = document.getElementById('tutorial-status'); // جديد
+        const toggleTutorial = document.getElementById('toggle-tutorial'); 
+        const tutorialStatus = document.getElementById('tutorial-status'); 
         let currentStep = 1;
         const totalSteps = 5;
 
@@ -954,7 +954,8 @@
         // وظيفة إكمال/تخطي البرنامج التعليمي
         function completeTutorial() {
             tutorialOverlay.classList.remove('active');
-            localStorage.setItem('tutorialCompleted', 'true');
+            // Removed localStorage.setItem('tutorialCompleted', 'true');
+            // This ensures the tutorial will show on next load unless explicitly disabled
         }
 
         skipTutorial.addEventListener('click', () => {
@@ -977,8 +978,8 @@
         // تعديل الملف الشخصي
         editProfileBtn.addEventListener('click', () => {
             settingsPanel.classList.remove('active');
-            profileCard.classList.add('hidden'); // يمكنك إخفاء البطاقة الرئيسية إذا أردت
-            editFormOverlay.classList.add('active'); // عرض الغطاء ونافذة التعديل
+            profileCard.classList.add('hidden'); 
+            editFormOverlay.classList.add('active'); 
             
             // تعبئة الحقول بالقيم الحالية المحفوظة في localStorage
             nameInput.value = localStorage.getItem('profileName') || nameDisplay.textContent;
@@ -989,8 +990,8 @@
         
         // إلغاء التعديل
         cancelEdit.addEventListener('click', () => {
-            editFormOverlay.classList.remove('active'); // إخفاء الغطاء ونافذة التعديل
-            profileCard.classList.remove('hidden'); // إعادة إظهار البطاقة الرئيسية
+            editFormOverlay.classList.remove('active'); 
+            profileCard.classList.remove('hidden'); 
         });
         
         // معالجة اختيار صورة جديدة
@@ -1033,8 +1034,8 @@
             }
             
             // العودة إلى عرض الملف الشخصي
-            editFormOverlay.classList.remove('active'); // إخفاء الغطاء ونافذة التعديل
-            profileCard.classList.remove('hidden'); // إعادة إظهار البطاقة الرئيسية
+            editFormOverlay.classList.remove('active'); 
+            profileCard.classList.remove('hidden'); 
         });
         
         // تبديل إظهار/إخفاء البطاقة
@@ -1159,9 +1160,7 @@
                 // User wants to enable tutorial
                 localStorage.setItem('disableTutorial', 'false');
                 tutorialStatus.textContent = 'مفعّلة';
-                // If it was completed before, and now re-enabled, show it again
-                // Optionally reset tutorialCompleted so it shows from start
-                localStorage.removeItem('tutorialCompleted'); // Reset completion status
+                // If it's re-enabled, show it from step 1
                 setTimeout(() => {
                     tutorialOverlay.classList.add('active');
                     showStep(1); // Ensure it starts from step 1
@@ -1242,12 +1241,12 @@
                 if (savedBackgroundType === 'video') {
                     videoBg.src = savedBackgroundUrl;
                     videoBg.style.opacity = '1';
-                    document.body.style.backgroundImage = 'none'; // إزالة خلفية الصورة إذا كان هناك فيديو
+                    document.body.style.backgroundImage = 'none'; 
                 } else if (savedBackgroundType === 'image') {
                     document.body.style.backgroundImage = `url('${savedBackgroundUrl}')`;
                     document.body.style.backgroundSize = 'cover';
                     document.body.style.backgroundPosition = 'center';
-                    videoBg.src = ''; // إزالة مصدر الفيديو إذا كان هناك صورة
+                    videoBg.src = ''; 
                     videoBg.style.opacity = '0';
                 }
                 bgUrlInput.value = savedBackgroundUrl;
@@ -1256,14 +1255,13 @@
 
             // التحقق مما إذا كانت الحقوق قد تمت إزالتها مسبقاً
             if (localStorage.getItem('rightsRemoved') === 'true') {
-                watermarkText.classList.add('hidden'); // إخفاء العلامة المائية عند التحميل
+                watermarkText.classList.add('hidden'); 
                 removeRightsMessage.textContent = 'تمت إزالة الحقوق مسبقاً.';
                 removeRightsMessage.style.color = '#4CAF50';
                 secretCodeInput.disabled = true;
                 submitCodeBtn.disabled = true;
                 purchaseLinkBtn.disabled = true;
             } else {
-                // تأكد من إخفاء زر إدخال الكود في البداية إذا لم يكن الكود قد تم إزالته
                 submitCodeBtn.classList.add('hidden');
             }
 
@@ -1274,15 +1272,13 @@
                 toggleTutorial.checked = true;
                 tutorialStatus.textContent = 'معطّلة';
             } else {
-                const tutorialCompletedBefore = localStorage.getItem('tutorialCompleted') === 'true';
-                if (!tutorialCompletedBefore) {
-                    setTimeout(() => {
-                        tutorialOverlay.classList.add('active');
-                        showStep(1); // Ensure it starts from step 1
-                    }, 1000);
-                }
                 toggleTutorial.checked = false;
                 tutorialStatus.textContent = 'مفعّلة';
+                // Always show the tutorial if not explicitly disabled
+                setTimeout(() => {
+                    tutorialOverlay.classList.add('active');
+                    showStep(1); // Always start from step 1
+                }, 1000);
             }
         });
     </script>
